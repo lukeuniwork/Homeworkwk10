@@ -1,0 +1,46 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 500,
+  "height": 420,
+  "title": "Fires per square kilometer over the last 5 years",
+  "projection": {
+    "type": "equirectangular",
+    "center": [134, -28],
+    "scale": 600
+  },
+  "layer": [
+    {
+      "data": { "sphere": true },
+      "mark": { "type": "geoshape", "filled": true, "color": "#a4c8f0" }
+    },
+    {
+      "data": {
+        "url": "topo.json",
+        "format": { "type": "topojson", "feature": "topo" }
+      },
+      "transform": [
+        {
+          "lookup": "properties.SA3_CODE21",
+          "from": {
+            "data": { "url": "fires_by_SA3_with_density.csv" },
+            "key": "SA3_CODE21",
+            "fields": ["fire_density"]
+          }
+        }
+      ],
+      "mark": { "type": "geoshape", "stroke": "white", "strokeWidth": 0.3 },
+      "encoding": {
+        "color": {
+          "field": "fire_density",
+          "type": "quantitative",
+          "title": "Fire Detections per km^2",
+          "scale": { "scheme": "orangered" }
+        },
+        "tooltip": [
+          { "field": "properties.SA3_NAME21", "type": "nominal", "title": "Region" },
+          { "field": "fire_density", "type": "quantitative", "title": "Fires per km^2" }
+        ]
+      }
+    }
+  ]
+}

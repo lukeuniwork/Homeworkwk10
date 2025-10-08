@@ -1,0 +1,52 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {"text":"Fire sizes and occurence over months (Note log scale)","fontSize": 20},
+  "data": {"url": "stacked-bar.csv"},
+  "transform": [
+    {
+      "fold": ["1000","2000","3000","4000","5000","10000"],
+      "as": ["SeverityRaw", "Fires"]
+    },
+    {
+      "calculate": "datum.SeverityRaw == '1000' ? '0-1' : datum.SeverityRaw == '2000' ? '1-2' : datum.SeverityRaw == '3000' ? '2-3' : datum.SeverityRaw == '4000' ? '3-4' : datum.SeverityRaw == '5000' ? '4-5' : '5+'",
+      "as": "Severity"
+    }
+  ],
+  "mark": "bar",
+  "encoding": {
+    "x": {
+      "field": "month",
+      "type": "ordinal",
+      "title": "Month",
+      "sort": [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ]
+    },
+    "y": {
+      "aggregate": "sum",
+      "field": "Fires",
+      "type": "quantitative",
+      "scale": {"type": "symlog"},
+      "title": "Number of Fires",
+      "axis": {
+        "values": [1, 10, 100, 1000, 10000, 100000]
+      }
+    },
+    "color": {
+      "field": "Severity",
+      "type": "nominal",
+      "scale": {
+        "domain": ["5+","4-5","3-4","2-3","1-2","0-1"],
+        "range": ["#8c564b", "#9467bd", "#1f77b4", "#aec7e8", "#c7c7c7", "#e7ba52"]
+      },
+      "title": "Fire output Power (GJ)",
+      "sort": "descending"
+    },
+    "tooltip": [
+      {"field": "month", "type": "nominal", "title": "Month"},
+      {"field": "Severity", "type": "nominal", "title": "Power (GJ)"},
+      {"aggregate": "sum", "field": "Fires", "type": "quantitative", "title": "Number of Fires"}
+    ]
+  }
+}

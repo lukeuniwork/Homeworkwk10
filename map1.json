@@ -1,0 +1,111 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 500,
+  "height": 420,
+  "title": {"text": "Fires since 2020", "fontSize": 20},
+  "projection": {
+    "type": "equirectangular",
+    "center": [134, -28],
+    "scale": 600
+  },
+  "params": [
+    {
+      "name": "monthIndex",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 59,
+        "step": 1,
+        "name": "Month (0 = Jan 2020): "
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": { "sphere": true },
+      "mark": { "type": "geoshape", "filled": true, "color": "#a4c8f0" }
+    },
+    {
+      "data": {
+        "url": "topo.json",
+        "format": { "type": "topojson", "feature": "topo" }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#bfd6ad",
+        "stroke": "white"
+      }
+    },
+    {
+      "data": { "url": "modis_Australia_filtered.csv" },
+      "transform": [
+        {
+          "calculate": "timeFormat(datetime(2020 + floor(monthIndex/12), monthIndex%12, 1), '%Y-%m')",
+          "as": "selected_month"
+        },
+        { "filter": "datum.year_month == datum.selected_month" }
+      ],
+      "mark": {
+        "type": "circle",
+        "opacity": 0.7
+      },
+      "encoding": {
+        "longitude": { "field": "longitude", "type": "quantitative" },
+        "latitude": { "field": "latitude", "type": "quantitative" },
+        "size": {
+          "field": "frp",
+          "type": "quantitative",
+          "title": "Power Output (MJ)",
+          "scale": { "domain": [0, 10000] }
+        },
+        "color": {
+          "field": "brightness",
+          "type": "quantitative",
+          "title": "Brightness (Kelvin)",
+          "scale": { "scheme": "goldred", "domain": [300, 550] }
+        },
+        "tooltip": [
+          { "field": "brightness", "type": "quantitative", "title": "Brightness (K)" },
+          { "field": "frp", "type": "quantitative", "title": "Power (MJ)" },
+          { "field": "acq_date", "type": "nominal", "title": "Date" }
+        ]
+      }
+    },
+    {
+      "data": { "values": [{}] },
+      "transform": [
+        {
+          "calculate": "timeFormat(datetime(2020 + floor(monthIndex/12), monthIndex%12, 1), '%B %Y')",
+          "as": "label"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 17,
+        "fontWeight": "bold",
+        "dy": -320,
+        "dx": 0,
+        "align": "center"
+      },
+      "encoding": { "text": { "field": "label", "type": "nominal" } }
+    },
+    {
+      "data": { "values": [{ "lon": 150, "lat": -45, "note": "Major fire detections shown in red" }] },
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "color": "#444",
+        "fontSize": 10,
+        "dx": 0,
+        "dy": 0
+      },
+      "encoding": {
+        "longitude": { "field": "lon", "type": "quantitative" },
+        "latitude": { "field": "lat", "type": "quantitative" },
+        "text": { "field": "note", "type": "nominal" }
+      }
+    }
+  ],
+  "config": { "view": { "renderer": "canvas" } }
+}
