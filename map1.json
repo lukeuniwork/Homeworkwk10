@@ -23,57 +23,50 @@
   ],
   "layer": [
     {
-      "data": { "sphere": true },
-      "mark": { "type": "geoshape", "filled": true, "color": "#a4c8f0" }
+      "data": {"sphere": true},
+      "mark": {"type": "geoshape", "filled": true, "color": "#a4c8f0"}
     },
     {
       "data": {
         "url": "topo.json",
-        "format": { "type": "topojson", "feature": "topo" }
+        "format": {"type": "topojson", "feature": "topo"}
       },
-      "mark": {
-        "type": "geoshape",
-        "fill": "#bfd6ad",
-        "stroke": "white"
-      }
+      "mark": {"type": "geoshape", "fill": "#bfd6ad", "stroke": "white"}
     },
     {
-      "data": { "url": "modis_Australia_filtered.csv" },
+      "data": {"url": "modis_Australia_filtered.csv"},
       "transform": [
         {
           "calculate": "timeFormat(datetime(2020 + floor(monthIndex/12), monthIndex%12, 1), '%Y-%m')",
           "as": "selected_month"
         },
-        { "filter": "datum.year_month == datum.selected_month" }
+        {"filter": "datum.year_month == datum.selected_month"}
       ],
-      "mark": {
-        "type": "circle",
-        "opacity": 0.7
-      },
+      "mark": {"type": "circle", "tooltip": {"content": "data"}},
       "encoding": {
-        "longitude": { "field": "longitude", "type": "quantitative" },
-        "latitude": { "field": "latitude", "type": "quantitative" },
+        "longitude": {"field": "longitude", "type": "quantitative"},
+        "latitude": {"field": "latitude", "type": "quantitative"},
         "size": {
           "field": "frp",
           "type": "quantitative",
           "title": "Power Output (MJ)",
-          "scale": { "domain": [0, 10000] }
+          "scale": {"domain": [0, 10000]}
         },
         "color": {
           "field": "brightness",
           "type": "quantitative",
           "title": "Brightness (Kelvin)",
-          "scale": { "scheme": "goldred", "domain": [300, 550] }
+          "scale": {"scheme": "goldred", "domain": [300, 550]}
         },
         "tooltip": [
-          { "field": "brightness", "type": "quantitative", "title": "Brightness (K)" },
-          { "field": "frp", "type": "quantitative", "title": "Power (MJ)" },
-          { "field": "acq_date", "type": "nominal", "title": "Date" }
+          {"field": "brightness", "type": "quantitative", "title": "Brightness (K)"},
+          {"field": "frp", "type": "quantitative", "title": "Power (MJ)"},
+          {"field": "acq_date", "type": "nominal", "title": "Date"}
         ]
       }
     },
     {
-      "data": { "values": [{}] },
+      "data": {"values": [{}]},
       "transform": [
         {
           "calculate": "timeFormat(datetime(2020 + floor(monthIndex/12), monthIndex%12, 1), '%B %Y')",
@@ -88,24 +81,32 @@
         "dx": 0,
         "align": "center"
       },
-      "encoding": { "text": { "field": "label", "type": "nominal" } }
+      "encoding": {"text": {"field": "label", "type": "nominal"}}
     },
     {
-      "data": { "values": [{ "lon": 150, "lat": -45, "note": "Major fire detections shown in red" }] },
+      "data": {
+        "values": [
+          {"state": "WA", "lon": 122, "lat": -25},
+          {"state": "NT", "lon": 133, "lat": -19},
+          {"state": "SA", "lon": 136, "lat": -30},
+          {"state": "QLD", "lon": 145, "lat": -20},
+          {"state": "NSW", "lon": 147, "lat": -32},
+          {"state": "VIC", "lon": 144, "lat": -37},
+          {"state": "TAS", "lon": 147, "lat": -42}
+        ]
+      },
       "mark": {
         "type": "text",
-        "align": "right",
-        "color": "#444",
-        "fontSize": 10,
-        "dx": 0,
-        "dy": 0
+        "fontSize": 8,
+        "fontWeight": "bold",
+        "color": "#2c3e50"
       },
       "encoding": {
-        "longitude": { "field": "lon", "type": "quantitative" },
-        "latitude": { "field": "lat", "type": "quantitative" },
-        "text": { "field": "note", "type": "nominal" }
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
+        "text": {"field": "state"}
       }
     }
   ],
-  "config": { "view": { "renderer": "canvas" } }
+  "config": {"view": {"renderer": "canvas"}}
 }
